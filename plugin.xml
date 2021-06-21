@@ -29,6 +29,7 @@
         
         <!-- android manifest might be removed later -->
         <config-file parent="/*" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
         </config-file>
         
         <source-file src="src/android/AndroidCordovaPedometer.java" target-dir="src/com/jvcaalim/cordova/androidpedometer/AndroidCordovaPedometer" />
