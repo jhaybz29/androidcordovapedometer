@@ -76,7 +76,7 @@ public class AndroidCordovaPedometer extends CordovaPlugin
         } 
         else 
         {
-            addProperty(returnObj, KEY_ERROR, ACTION_REQUEST_PERMISSION);
+            addProperty(returnObj, KEY_ERROR, "Request Permission");
             addProperty(returnObj, KEY_MESSAGE, "Unknown error.");
             permissionsCallback.error(returnObj);
         }
