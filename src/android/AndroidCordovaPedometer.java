@@ -1,5 +1,7 @@
 package com.jvcaalim.cordova.androidpedometer;
 
+import android.util.Log;
+
 import android.os.Build;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -224,6 +226,7 @@ public class AndroidCordovaPedometer extends CordovaPlugin implements SensorEven
             }
             totalSteps = (int) sensorEvent.values[0];
             currentSteps = totalSteps - previousSteps;
+            Log.v("AndroidCordovaPedometer", "currentSteps" + currentSteps);
 
             //fire the stepping event
             try 
