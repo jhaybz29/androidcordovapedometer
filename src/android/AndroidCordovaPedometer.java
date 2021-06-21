@@ -1,9 +1,16 @@
 package com.jvcaalim.cordova.androidpedometer;
 
 import android.os.Build;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
+import org.apache.cordova.CordovaWebView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,16 +19,42 @@ import org.json.JSONObject;
 /**
  * This class echoes a string called from JavaScript.
  */
-public class AndroidCordovaPedometer extends CordovaPlugin 
+public class AndroidCordovaPedometer extends CordovaPlugin implements SensorEventListener 
 {
+    public static CordovaWebView gWebView;
+
     private static final String PERMISSION_ID_ACTIVITY_RECOGNITION = "android.permission.ACTIVITY_RECOGNITION";
     private static final int REQUEST_CODE_ENABLE_PERMISSION = 3256;
 
     private static final String KEY_ERROR = "error";
     private static final String KEY_MESSAGE = "message";
     private static final String KEY_RESULT_PERMISSION = "hasPermission";
+    private static String stepsCallBack = "Acpedometer.prototype.onSteppingRecieved";
+
+    private SensorManager sensorManager; 
+    private Sensor stepSensor;
+
+    private boolean isSensorRunning;
+    private boolean isFirstRun = true;
+    private int totalSteps = 0;
+    private int previousSteps = 0;
+    private int currentSteps = 0;
 
     private CallbackContext permissionsCallback;
+
+    @Override
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) 
+    {
+        super.initialize(cordova, webView);
+        gWebView = webView;
+        sensorManager = (SensorManager) cordova.getActivity().getSystemService(Context.SENSOR_SERVICE);
+    }
+
+    @Override
+    public void onResume(boolean multitasking) 
+    {
+        super.onResume(multitasking);
+    }
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException 
@@ -50,6 +83,36 @@ public class AndroidCordovaPedometer extends CordovaPlugin
                     public void run() 
                     {
                         requestPermissionActivityRecognition(callbackContext);
+                    }
+                }
+            );
+
+            return true;
+        }
+        else if( action.equals("startPedometerUpdates") )
+        {
+            cordova.getThreadPool().execute
+            (
+                new Runnable() 
+                {
+                    public void run() 
+                    {
+                        startPedometerUpdates();
+                    }
+                }
+            );
+
+            return true;
+        }
+        else if( action.equals("stopPedometer") )
+        {
+            cordova.getThreadPool().execute
+            (
+                new Runnable() 
+                {
+                    public void run() 
+                    {
+                        stopPedometer();
                     }
                 }
             );
@@ -134,4 +197,73 @@ public class AndroidCordovaPedometer extends CordovaPlugin
             //Believe exception only occurs when adding duplicate keys, so just ignore it
         }
     }
+
+    private void startPedometerUpdates()
+    {
+        if(sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null)
+        {
+            isSensorRunning = true;
+            stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        }
+        else
+        {
+            isSensorRunning = false;
+        }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) 
+    {
+        if(isSensorRunning)
+        {
+            if(isFirstRun)
+            {
+                isFirstRun = false;
+                previousSteps = (int) sensorEvent.values[0];
+            }
+            totalSteps = (int) sensorEvent.values[0];
+            currentSteps = totalSteps - previousSteps;
+
+            //fire the stepping event
+            try 
+            {
+                String callBack = "javascript:" + stepsCallBack + "(" + currentSteps + ")";
+                if(gWebView != null)
+                {
+                    gWebView.sendJavascript(callBack);
+                }
+                else 
+                {
+                    //gWebView is null
+                }
+            } 
+            catch (Exception e) 
+            {
+                //error
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) 
+    {
+        //required Override
+    }
+
+    @Override
+    public void onDestroy() 
+    {
+        stopPedometer();
+    }
+
+    private void stopPedometer()
+    {
+        if(isSensorRunning == true)
+        {
+            isSensorRunning= false;
+            sensorManager.unregisterListener(this);
+        }
+    }
+
 }
