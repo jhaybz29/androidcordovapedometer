@@ -31,7 +31,7 @@ public class AndroidCordovaPedometer extends CordovaPlugin implements SensorEven
     private static final String KEY_ERROR = "error";
     private static final String KEY_MESSAGE = "message";
     private static final String KEY_RESULT_PERMISSION = "hasPermission";
-    private static String stepsCallBack = "Acpedometer.prototype.onSteppingRecieved";
+    private static String stepsCallBack = "cordova.plugins.AndroidCordovaPedometer.onSteppingRecieved";
 
     private SensorManager sensorManager; 
     private Sensor stepSensor;
