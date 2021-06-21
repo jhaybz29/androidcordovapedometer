@@ -1,5 +1,7 @@
 package com.jvcaalim.cordova.androidpedometer;
 
+import android.os.Build;
+
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 
