@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com.jvcaalim.cordova.androidpedometer" 
+        version="0.1.0" 
+        xmlns="http://apache.org/cordova/ns/plugins/1.0" 
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <name>AndroidCordovaPedometer</name>
+
+    <description>This is a work in progress. A simple android pedometer plugin created mainly to bridge the feature to Outsystems</description>
+
+    <author>Jv Caalim</author>
+
+    <engines>
+        <engine name="cordova" version=">=5.0.0"/>
+    </engines>
+
+    <!-- android -->
+    <platform name="android">
+
+        <js-module name="AndroidCordovaPedometer" src="www/AndroidCordovaPedometer.js">
+            <clobbers target="cordova.plugins.AndroidCordovaPedometer" />
+        </js-module>
+
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="AndroidCordovaPedometer">
+                <param name="android-package" value="com.jvcaalim.cordova.androidpedometer.AndroidCordovaPedometer" />
+            </feature>
+        </config-file>
+        
+        <!-- android manifest might be removed later -->
+        <config-file parent="/*" target="AndroidManifest.xml">
+        </config-file>
+        
+        <source-file src="src/android/AndroidCordovaPedometer.java" target-dir="src/com/jvcaalim/cordova/androidpedometer/AndroidCordovaPedometer" />
+
+    </platform>
+
+
+</plugin>

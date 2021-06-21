@@ -1,0 +1,17 @@
+{
+  "name": "com.jvcaalim.cordova.androidpedometer",
+  "version": "0.1.0",
+  "description": "This is a work in progress: A simple android pedometer plugin created mainly to bridge the feature to Outsystems",
+  "cordova": {
+    "id": "com.jvcaalim.cordova.androidpedometer",
+    "platforms": [
+      "android"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "Jv Caalim",
+  "license": "ISC"
+}
